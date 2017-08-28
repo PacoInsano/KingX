@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 public class Controller implements EventHandler<javafx.event.ActionEvent> {
 
 	private Model model;
-	private ViewSpieler view;
+	private View view;
 	
 	public Controller() { 
 		
@@ -17,7 +17,7 @@ public class Controller implements EventHandler<javafx.event.ActionEvent> {
 	 */
 
 
-	public void link(Model model, ViewSpieler view){
+	public void link(Model model, View view){
 		this.model=model;
 		this.view=view;
 		this.model.addObserver(view);
@@ -32,15 +32,17 @@ public class Controller implements EventHandler<javafx.event.ActionEvent> {
 			o = eventButton.getId();
 		}
 		switch (o) {
-			case ViewSpieler.buttonIdspielerAdd:   // eingegebenen Namen eintragen
+			case View.buttonIdspielerAdd:   // eingegebenen Namen eintragen
 				commitButtonClicked();
 				break;
 
-			case ViewSpieler.buttonIdspielerDelete:
+			case View.buttonIdspielerDelete:
 
-			case ViewSpieler.buttonIdClosePopup:
+			case View.buttonIdClosePopup:
 				view.popup.close();
 				break;
+			case View.buttonIdcont:
+				view.spielerAuswahl.close();
 		}
 	}
 	public void commitButtonClicked(){

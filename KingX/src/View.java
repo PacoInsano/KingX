@@ -12,20 +12,25 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.beans.XMLEncoder;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 
-public class ViewSpieler extends BorderPane implements Observer {
+public class View extends BorderPane implements Observer {
 
 
 	//The components of the view
-	private Group spielerGroup = new Group();
-	private Scene spielerScene = new Scene(spielerGroup);
+	private Group spielGroup = new Group();
+	private Scene spielScene = new Scene(spielGroup);
 	private HBox listBoxSpieler = new HBox();
 	private HBox contBox = new HBox();
 	private HBox buttonBox = new HBox(5);
+	private HBox backBox = new HBox();
 	private VBox allBox = new VBox();
 	private ListView<String> alleSpieler = new ListView<>();
 	private Button spielerAdd = new Button("Hinzufügen");
@@ -33,7 +38,6 @@ public class ViewSpieler extends BorderPane implements Observer {
 	private Button cont = new Button("Weiter");
 	private Button closePopup = new Button("  OK  ");
 	protected TextField namenEingabe = new TextField();
-	private ListView<String> spielerNamen = new ListView<>();
 
 	static final String buttonIdspielerAdd = "Hinzufügen";
 	static final String buttonIdspielerDelete = "Löschen";
@@ -46,8 +50,17 @@ public class ViewSpieler extends BorderPane implements Observer {
 	private Text message = new Text("Something went wrong.");
 	private VBox popupMiddleBox = new VBox(15);
 
-	public ViewSpieler(Stage spielerAuswahl) {
-		spielerAuswahl.setTitle("KingX: Spielerauswahl"); // Fenstetitel
+	Stage spielerAuswahl = new Stage();
+	private Group spielerAuswahlGroup = new Group();
+	private Scene spielerAuswahlScene = new Scene(spielerAuswahlGroup);
+
+
+	public View(Stage background) {
+		background.setTitle("KingX"); // Fenstertitel
+		spielerAuswahl.setTitle("KingX: Spielerauswahl"); // Fenstertitel
+		Image backpic = new Image("file:///C://Users//Pascal//IdeaProjects//KingX//KingX//Pictures//Background.png");
+		ImageView iv1 = new ImageView();
+		iv1.setImage(backpic);
 
 		// IDs setzen für EventHandler:
 		spielerAdd.setId(buttonIdspielerAdd);
@@ -62,6 +75,7 @@ public class ViewSpieler extends BorderPane implements Observer {
 				popup.show();
 			}
 				});
+
 		spielerDelete.setId(buttonIdspielerDelete);
 		spielerDelete.setOnAction((ActionEvent event) -> {
 			final int selectedIdx = alleSpieler.getSelectionModel().getSelectedIndex();
@@ -78,7 +92,31 @@ public class ViewSpieler extends BorderPane implements Observer {
 				popup.show();
 			}
 				});
+
 		cont.setId(buttonIdcont);
+		cont.setOnAction((ActionEvent event) -> {
+			int AnzahlSpieler = alleSpieler.getItems().size();
+			if (AnzahlSpieler != 0) {
+				if (AnzahlSpieler != 1) {
+					String[] NamensListe = new String[AnzahlSpieler];
+					try (FileOutputStream fo = new FileOutputStream("AktuelleSpieler.xml");
+						 XMLEncoder encoder = new XMLEncoder(fo)) {
+						encoder.writeObject(NamensListe); // write Object
+						encoder.flush();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					this.setMessage("Du willst alleine ein Trinkspiel spielen?");
+					popup.show();
+				}
+			}
+			else {
+				this.setMessage("Man braucht SPIELER um ein SPIEL zu spielen.");
+				popup.show();
+			}
+		});
+
 		closePopup.setId(buttonIdClosePopup);
 
 		contBox.setPadding(new Insets(5));
@@ -91,9 +129,14 @@ public class ViewSpieler extends BorderPane implements Observer {
 		listBoxSpieler.setAlignment(Pos.CENTER_LEFT);
 		contBox.setAlignment(Pos.BASELINE_CENTER);
 		allBox.getChildren().addAll(buttonBox, contBox, listBoxSpieler);
-		spielerGroup.getChildren().addAll(allBox);
+		spielerAuswahlGroup.getChildren().addAll(allBox);
 
-		spielerAuswahl.setScene(spielerScene);
+		backBox.getChildren().add(iv1);
+		spielGroup.getChildren().addAll(backBox);
+
+		background.setScene(spielScene);
+		background.show();
+		spielerAuswahl.setScene(spielerAuswahlScene);
 		spielerAuswahl.show();
 
 		popupMiddleBox.getChildren().addAll(message, closePopup);
@@ -104,9 +147,6 @@ public class ViewSpieler extends BorderPane implements Observer {
 
 
 
-	}
-	public ListView<String> getSpielerNamen() {
-		return spielerNamen;
 	}
 
 	void setMessage(String s) {

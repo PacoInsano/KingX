@@ -1,5 +1,7 @@
-import javafx.collections.ObservableList;
-
+import javax.swing.text.html.ListView;
+import java.beans.XMLEncoder;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -19,9 +21,6 @@ public class Model extends Observable {
 		super.notifyObservers();
 	}
 
-	public ArrayList<String> getStrings() {
-		return strings;
-	}
 
 	public void delete() {
 		strings.clear();
@@ -29,6 +28,17 @@ public class Model extends Observable {
 		// Mark as changed and inform the observers
 		super.setChanged();
 		super.notifyObservers();
+	}
+	public void saveSpieler (ListView sl) {
+		try ( FileOutputStream fo = new FileOutputStream ( "Spielernamen.xml " ) ;
+		XMLEncoder encoder = new XMLEncoder (fo))
+		{
+			encoder.writeObject(sl);
+			encoder.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }
