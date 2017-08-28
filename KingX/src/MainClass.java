@@ -9,7 +9,7 @@ public class MainClass extends Application{
 
 	public void start(Stage primaryStage) throws Exception {
 		Model model = new Model();
-		View view = new View(primaryStage);
+		ViewSpieler view = new ViewSpieler(primaryStage);
 		Controller controller = new Controller();
 		controller.link(model, view);
 	}

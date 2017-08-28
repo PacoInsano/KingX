@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 public class Controller implements EventHandler<javafx.event.ActionEvent> {
 
 	private Model model;
-	private View view;
+	private ViewSpieler view;
 	
 	public Controller() { 
 		
@@ -17,7 +17,7 @@ public class Controller implements EventHandler<javafx.event.ActionEvent> {
 	 */
 
 
-	public void link(Model model, View view){
+	public void link(Model model, ViewSpieler view){
 		this.model=model;
 		this.view=view;
 		this.model.addObserver(view);
@@ -32,20 +32,18 @@ public class Controller implements EventHandler<javafx.event.ActionEvent> {
 			o = eventButton.getId();
 		}
 		switch (o) {
-			case View.buttonIdspielerAdd:   // eingegebenen Namen eintragen
+			case ViewSpieler.buttonIdspielerAdd:   // eingegebenen Namen eintragen
 				commitButtonClicked();
 				break;
 
-			case View.buttonIdspielerDelete:
-				if(view.getPlayListList().getSelectionModel().getSelectedIndex()==-1) {  //abfangen falls kein Song ausgewählt wurde
-					view.setMessage("Kein Spieler ausgewählt.");
-					view.popup.show();
-					break;
-				}
+			case ViewSpieler.buttonIdspielerDelete:
+
+			case ViewSpieler.buttonIdClosePopup:
+				view.popup.close();
+				break;
 		}
 	}
 	public void commitButtonClicked(){
 
 	}
-
 }
