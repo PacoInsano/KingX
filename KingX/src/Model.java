@@ -1,20 +1,23 @@
-import javax.swing.text.html.ListView;
+import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 
 public class Model extends Observable {
-	private ArrayList<String> strings;
+	public ArrayList<String> NamensListe = new ArrayList<>();
 
 	public Model() {
 		super();
-		strings = new ArrayList<String>();
+		NamensListe = new ArrayList<String>();
 	}
 
-	public void addString(String s) {
-		strings.add(s);
+
+
+	public void addSpieler(String s) {
+		NamensListe.add(s);
 
 		// Mark as changed and inform the observers
 		super.setChanged();
@@ -22,23 +25,26 @@ public class Model extends Observable {
 	}
 
 
-	public void delete() {
-		strings.clear();
+
+
+
+	public void deleteSpieler(int in) {
+		NamensListe.remove(in);
 
 		// Mark as changed and inform the observers
 		super.setChanged();
 		super.notifyObservers();
 	}
-	public void saveSpieler (ListView sl) {
-		try ( FileOutputStream fo = new FileOutputStream ( "Spielernamen.xml " ) ;
-		XMLEncoder encoder = new XMLEncoder (fo))
-		{
-			encoder.writeObject(sl);
+	public void saveSpieler () {
+		try (FileOutputStream fo = new FileOutputStream("Spielernamen.xml");
+			 XMLEncoder encoder = new XMLEncoder(fo)) {
+			encoder.writeObject(NamensListe); // write Object
 			encoder.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }
+
+

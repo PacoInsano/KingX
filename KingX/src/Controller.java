@@ -24,28 +24,69 @@ public class Controller implements EventHandler<javafx.event.ActionEvent> {
 		view.addEventHandler(this);
 		
 	}
+	@Override
 	public void handle(ActionEvent event) {
 		String o = "XX";    // button ID
-		Object eventSource = event.getSource();
-		if (eventSource.getClass().equals(Button.class)) {  // Event stammt von einem Button
-			Button eventButton = (Button) eventSource;
-			o = eventButton.getId();
+		Object eventSource=event.getSource();
+		if(eventSource.getClass().equals(Button.class)){  // Event stammt von einem Button
+			Button eventButton= (Button) eventSource;
+			o=eventButton.getId();
 		}
 		switch (o) {
-			case View.buttonIdspielerAdd:   // eingegebenen Namen eintragen
-				commitButtonClicked();
+			case View.buttonIdspielerAdd:
+				//Hinzufügen-Button:
+				String c = view.namenEingabe.getText();
+				if (!(c.equals(""))) {
+					view.alleSpieler.getItems().add(view.alleSpieler.getItems().size(), c);
+					view.alleSpieler.scrollTo(view.alleSpieler.getItems().size() - 1);
+				}
+				else {
+					view.setMessage("Kein Name eingegeben.");
+					view.popup.show();
+				}
+				model.addSpieler(c);
 				break;
-
 			case View.buttonIdspielerDelete:
-
+				//Löschen-Button:
+				final int selectedIdx = view.alleSpieler.getSelectionModel().getSelectedIndex();
+				if (selectedIdx != -1) {
+					final int newSelectedIdx =
+							(selectedIdx == view.alleSpieler.getItems().size() - 1)
+									? selectedIdx - 1
+									: selectedIdx;
+					view.alleSpieler.getSelectionModel().select(newSelectedIdx);
+					view.alleSpieler.getItems().remove(selectedIdx);
+					model.deleteSpieler(selectedIdx);
+				}
+				else {
+					view.setMessage("Kein Spieler ausgewählt.");
+					view.popup.show();
+				}
+				break;
 			case View.buttonIdClosePopup:
-				view.popup.close();
+				//Ok-Button:
+				okButtonClicked();
 				break;
 			case View.buttonIdcont:
-				view.spielerAuswahl.close();
+				//Weiter-Button:
+				int AnzahlSpieler = view.alleSpieler.getItems().size();
+				if (AnzahlSpieler != 0) {
+					if (AnzahlSpieler != 1) {
+						model.saveSpieler();
+						view.spielerAuswahl.hide();
+					} else {
+						view.setMessage("Du willst alleine ein Trinkspiel spielen?");
+						view.popup.show();
+					}
+				}
+				else {
+					view.setMessage("Man braucht SPIELER um ein SPIEL zu spielen.");
+					view.popup.show();
+				}
+				break;
 		}
 	}
-	public void commitButtonClicked(){
-
+	public void okButtonClicked(){
+		view.popup.close();
 	}
 }
