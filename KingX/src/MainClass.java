@@ -33,7 +33,8 @@ public class MainClass extends Application{
 				view.alleSpieler.scrollTo(view.alleSpieler.getItems().size() - 1);
 			}
 		} catch (NullPointerException | IOException e) {
-			e.printStackTrace();
+			view.setMessage("Keine alte Spieler-Liste gefunden, erstelle eine neue!");
+			view.popup.show();
 		}
 	}
 

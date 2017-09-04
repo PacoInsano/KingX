@@ -27,10 +27,10 @@ public class Controller implements EventHandler<javafx.event.ActionEvent> {
 	@Override
 	public void handle(ActionEvent event) {
 		String o = "XX";    // button ID
-		Object eventSource=event.getSource();
-		if(eventSource.getClass().equals(Button.class)){  // Event stammt von einem Button
-			Button eventButton= (Button) eventSource;
-			o=eventButton.getId();
+		Object eventSource = event.getSource();
+		if (eventSource.getClass().equals(Button.class)) {  // Event stammt von einem Button
+			Button eventButton = (Button) eventSource;
+			o = eventButton.getId();
 		}
 		switch (o) {
 			case View.buttonIdspielerAdd:
@@ -39,12 +39,11 @@ public class Controller implements EventHandler<javafx.event.ActionEvent> {
 				if (!(c.equals(""))) {
 					view.alleSpieler.getItems().add(view.alleSpieler.getItems().size(), c);
 					view.alleSpieler.scrollTo(view.alleSpieler.getItems().size() - 1);
-				}
-				else {
+					model.addSpieler(c);
+				} else {
 					view.setMessage("Kein Name eingegeben.");
 					view.popup.show();
 				}
-				model.addSpieler(c);
 				break;
 			case View.buttonIdspielerDelete:
 				//Löschen-Button:
@@ -57,8 +56,7 @@ public class Controller implements EventHandler<javafx.event.ActionEvent> {
 					view.alleSpieler.getSelectionModel().select(newSelectedIdx);
 					view.alleSpieler.getItems().remove(selectedIdx);
 					model.deleteSpieler(selectedIdx);
-				}
-				else {
+				} else {
 					view.setMessage("Kein Spieler ausgewählt.");
 					view.popup.show();
 				}
@@ -67,26 +65,47 @@ public class Controller implements EventHandler<javafx.event.ActionEvent> {
 				//Ok-Button:
 				okButtonClicked();
 				break;
-			case View.buttonIdcont:
+			case View.buttonIdspielerCont:
 				//Weiter-Button:
 				int AnzahlSpieler = view.alleSpieler.getItems().size();
 				if (AnzahlSpieler != 0) {
 					if (AnzahlSpieler != 1) {
 						model.saveSpieler();
-						view.spielerAuswahl.hide();
+						view.spielerAuswahl.close();
+						view.ViewRegeln();
 					} else {
 						view.setMessage("Du willst alleine ein Trinkspiel spielen?");
 						view.popup.show();
 					}
-				}
-				else {
+				} else {
 					view.setMessage("Man braucht SPIELER um ein SPIEL zu spielen.");
 					view.popup.show();
 				}
 				break;
+			case View.buttonIdregelnSave:
+				//preset speichern:
+				String presetEingabe = view.RegelListenPreset.getText();
+				if (!(presetEingabe.equals(""))) {
+					try {
+						view.getPresetZahlen();
+						view.setMessage(model.savePreset(presetEingabe, view.getPresetZahlen()));
+						view.popup.show();
+					} catch(NullPointerException e) {
+						view.setMessage("Es müssen ZAHLEN für die Regeln eingegeben werden!");
+						view.popup.show();
+					} catch(NumberFormatException e) {
+						view.setMessage("Es müssen ZAHLEN für die Regeln eingegeben werden!");
+						view.popup.show();
+					}
+				}
+				else {
+					view.setMessage("Du musst dem Preset doch schon einen Namen geben :-(");
+					view.popup.show();
+				}
+
 		}
 	}
 	public void okButtonClicked(){
-		view.popup.close();
+			view.popup.close();
 	}
 }
